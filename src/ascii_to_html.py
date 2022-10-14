@@ -1,4 +1,4 @@
-def ascii_to_html(source):
+def ascii_to_html(source, insert_nbsp=False):
     result = "<span>"
     tags = [0, 0, False, False]
     index = 0
@@ -23,7 +23,10 @@ def ascii_to_html(source):
                       f'{"ansiBold" if tags[2] else ""} {"ansiUnderline" if tags[3] else ""}">'
             index += len(nums_str) + 3  # 3 = len('\x1b[m'); (account for redundant chars).
         try:
-            result += source[index]
+            if insert_nbsp and source[index] == " ":
+                result += "&nbsp;"
+            else:
+                result += source[index]
         except IndexError:
             pass
         index += 1
