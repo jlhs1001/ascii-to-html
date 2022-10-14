@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ascii_to_html",
-    version="0.5",
+    version="1.0",
     license="MIT",
     author="jlhs1001 (aka Liam Seewald)",
     author_email="jlhsdev@gmail.com",

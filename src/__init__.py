@@ -1,1 +1,1 @@
-from ascii_to_html import ascii_to_html
+from src.ascii_to_html.main import ascii_to_html

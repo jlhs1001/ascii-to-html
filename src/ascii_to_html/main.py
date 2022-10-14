@@ -1,4 +1,10 @@
 def ascii_to_html(source, insert_nbsp=False):
+    """ Convert ANSI escape codes into html tags
+
+    :param source: source to convert
+    :param insert_nbsp: replace spaces with non-breaking spaces
+    :return: converted string
+    """
     result = "<span>"
     tags = [0, 0, False, False]
     index = 0
