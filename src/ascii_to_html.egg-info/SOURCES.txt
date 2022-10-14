@@ -1,8 +1,6 @@
 README.md
 setup.cfg
 setup.py
-src/ascii_to_html/__init__.py
-src/ascii_to_html/ascii_to_html.py
 src/ascii_to_html.egg-info/PKG-INFO
 src/ascii_to_html.egg-info/SOURCES.txt
 src/ascii_to_html.egg-info/dependency_links.txt
