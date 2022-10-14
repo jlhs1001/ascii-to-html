@@ -1,8 +1,8 @@
 # ascii_to_html
 
-(Note: package is still in its early stages)
-
 Made by Liam Seewald
+
+First you import the package
 
 Call the function:
 ```python

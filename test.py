@@ -1,5 +1,5 @@
 import unittest
-from src.ascii_to_html import ascii_to_html
+from src.ascii_to_html.ascii_to_html import ascii_to_html
 
 
 test_data = {
