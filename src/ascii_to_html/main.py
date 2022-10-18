@@ -145,6 +145,22 @@ class AsciiConverter:
         # close out final span and parent span
         return result + "</span></span>"
 
+    def generate_tag(self, text_state):
+        if self.inline_css:
+            return f"<span style=\"" \
+                   f"{color_lookup[text_state.background] if text_state.background != 0 else ''}" \
+                   f"{';' + color_lookup[text_state.foreground] if text_state.foreground != 0 else ''}" \
+                   f"{';' + color_lookup[4] if text_state.underlined else ''}" \
+                   f"{';' + color_lookup[1] if text_state.bold else ''}\">" \
+                   f"{';' + color_lookup[9] if text_state.underlined else ''}\">"
+        else:
+            return f"<span class=\"" \
+                   f"{'ansi' + str(text_state.background) if text_state.background != 0 else ''}" \
+                   f"{' ansi' + str(text_state.foreground) if text_state.foreground != 0 else ''}" \
+                   f"{' ansi4' if text_state.underlined else ''}" \
+                   f"{' ansi1' if text_state.bold else ''}\">" \
+                   f"{' ansi9' if text_state.underlined else ''}\">"
+
     @staticmethod
     def parse_sequence(sequence):
         """ Parse ANSI escape sequence string into a list of numbers
@@ -165,21 +181,8 @@ class AsciiConverter:
 
     @staticmethod
     def generate_css():
-        res = ".ansiDefault{#FFFFFF}.ansiBackground{#000000}"
+        res = ".ansiDefault{color:#FFFFFF}.ansiBackground{background-color:#000000}"
         for code, color in color_lookup.items():
             res += f".ansi{code}{{{color}}}\n"
         return res
 
-    def generate_tag(self, text_state):
-        if self.inline_css:
-            return f"<span style=\"" \
-                   f"{color_lookup[text_state.background] if text_state.background != 0 else ''}" \
-                   f"{';' + color_lookup[text_state.foreground] if text_state.foreground != 0 else ''}" \
-                   f"{';' + color_lookup[4] if text_state.underlined else ''}" \
-                   f"{';' + color_lookup[1] if text_state.bold else ''}\">"
-        else:
-            return f"<span class=\"" \
-                   f"{'ansi' + str(text_state.background) if text_state.background != 0 else ''}" \
-                   f"{' ansi' + str(text_state.foreground) if text_state.foreground != 0 else ''}" \
-                   f"{' ansiUnderlined' if text_state.underlined else ''}" \
-                   f"{' ansiBold' if text_state.bold else ''}\">"
