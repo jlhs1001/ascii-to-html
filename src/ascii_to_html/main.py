@@ -230,3 +230,8 @@ class AsciiConverter:
                    f"{' ansi' + str(text_state.foreground) if text_state.foreground != 0 else ''}" \
                    f"{' ansiUnderlined' if text_state.underlined else ''}" \
                    f"{' ansiBold' if text_state.bold else ''}\">"
+
+x = 47
+for i in range(30, 38):
+    print(f"\x1b[{x}m\x1b[{i}mascii_to_html")
+    x -= 1

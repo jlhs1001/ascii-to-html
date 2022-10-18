@@ -1,12 +1,35 @@
-# ascii_to_html
+# Ascii To HTML
 
-Made by Liam Seewald
+-- Made by Liam Seewald
 
-First you import the package
+---
 
-Call the function:
-```python
-ascii_to_html("\x1b[4munderlined")
+## HTML-ify your ASCII with ease and elegance.
+
+---
+
+
+### Getting Started
+
+
+### Install!
+
+```commandline
+pip install ascii_to_html
 ```
 
-Enjoy!
+### Import, Initialize!
+```python
+from ascii_to_html import AsciiConverter
+
+converter = AsciiConverter(insert_nbsp=True, inline_css=False)
+
+# Hey! Make sure to grab a copy of the css data if you
+# don't plan on using inline css: 
+AsciiConverter.generate_css()
+```
+
+### Execute, Enjoy!
+```python
+converter.to_html("")
+```

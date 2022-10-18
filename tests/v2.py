@@ -230,3 +230,4 @@ class AsciiConverter:
                    f"{' ansi' + str(text_state.foreground) if text_state.foreground != 0 else ''}" \
                    f"{' ansiUnderlined' if text_state.underlined else ''}" \
                    f"{' ansiBold' if text_state.bold else ''}\">"
+
