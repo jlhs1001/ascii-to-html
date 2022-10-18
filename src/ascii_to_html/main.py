@@ -1,6 +1,9 @@
+import bisect
+
 color_lookup = {
     1: "font-weight:bold",
     4: "text-decoration:underline",
+    9: "text-decoration:line-through",
     30: "color:rgb(0,0,0)",
     31: "color:rgb(205,0,0)",
     32: "color:rbg(0,205,0",
@@ -35,80 +38,25 @@ color_lookup = {
     107: "background-color:rgb(255,255,255)",
 }
 
-CSS_TEMPLATE = f"""
-.ansi_fore{{color: #FFFFFF}}
-.ansi_back{{background-color:#000000}}
-.ansi1{{font-weight:bold}}
-.ansi4{{text-decoration: underline}}
-.ansi9{{text-decoration: line-through}}
-.ansi30{{color:rgb(0,0,0)}}
-.ansi31{{color:rgb(205,0,0)}}
-.ansi32{{color:rbg(0,205,0}}
-.ansi33{{color:rgb(205,205,0)}}
-.ansi34{{color:rgb(0,0,238)}}
-.ansi35{{color:rgb(205,0,205)}}
-.ansi36{{color:rgb(0,205,205)}}
-.ansi37{{color:rgb(229,229,229)}}
-.ansi40{{color:rgb(0,0,0)}}
-.ansi41{{color:rgb(205,0,0)}}
-.ansi42{{color:rbg(0,205,0}}
-.ansi43{{color:rgb(205,205,0)}}
-.ansi44{{color:rgb(0,0,238)}}
-.ansi45{{color:rgb(205,0,205)}}
-.ansi46{{color:rgb(0,205,205)}}
-.ansi47{{color:rgb(229,229,229)}}
-.ansi90{{color:rgb(127,127,127)}}
-.ansi91{{color:rgb(255,0,0)}}
-.ansi92{{color:rgb(0,255,0)}}
-.ansi93{{color:rgb(255,255,0)}}
-.ansi94{{color:rgb(92,92,255)}}
-.ansi95{{color:rgb(255,0,255)}}
-.ansi96{{color:rgb(0,255,255)}}
-.ansi97{{color:rgb(255,255,255)}}
-.ansi100{{background-color:rgb(127,127,127)}}
-.ansi101{{background-color:rgb(255,0,0)}}
-.ansi102{{background-color:rgb(0,255,0)}}
-.ansi103{{background-color:rgb(255,255,0)}}
-.ansi104{{background-color:rgb(92,92,255)}}
-.ansi105{{background-color:rgb(255,0,255)}}
-.ansi106{{background-color:rgb(0,255,255)}}
-.ansi107{{background-color:rgb(255,255,255)}}
-"""
-
-
 # -- Some helper functions to tidy things up --
 
 
-def is_background(code):
-    return 30 <= code <= 37 or 90 <= code <= 97
-
-
-def is_foreground(code):
-    return 40 <= code <= 47 or 100 <= code <= 107
-
-
-def is_bold(code):
-    return code == 1
-
-
-def is_underline(code):
-    return code == 4
+def is_background(code): return 30 <= code <= 37 or 90 <= code <= 97
+def is_foreground(code): return 40 <= code <= 47 or 100 <= code <= 107
+def is_strikethrough(code): return code == 9
+def is_underline(code): return code == 4
+def is_bold(code): return code == 1
 
 
 class TextEffectState:
     """ Keeps track of current text styling and effects """
 
-    def __init__(self, background=0, foreground=0, underlined=False, bold=False):
-        """
-        :param background: Current background color
-        :param foreground: Current foreground color
-        :param underlined: Current underlined state
-        :param bold: Current bold state
-        """
-        self.background = background
-        self.foreground = foreground
-        self.underlined = underlined
-        self.bold = bold
+    def __init__(self):
+        self.background = 0
+        self.foreground = 0
+        self.underlined = False
+        self.bold = False
+        self.strikethrough = False
 
     def update(self, codes):
         for code in codes:
@@ -126,53 +74,47 @@ class TextEffectState:
                 self.underlined = True
             elif is_bold(code):
                 self.bold = True
+            elif is_strikethrough(code):
+                self.strikethrough = True
 
-    def __eq__(self, other):
+    def __iter__(self):
+        """ Allow iteration through properties
+
+        :return: iterable list of properties
         """
-
-        :param other: Other TextEffectState to compare state with.
-        :return: Whether equivalent or not
-        """
-        return (self.background != other.background or
-                self.foreground != other.foreground or
-                self.underlined != other.underlined or
-                self.bold != other.bold)
-
-    def props(self):
-        return [self.background, self.foreground, self.underlined, self.bold]
+        return iter([self.background, self.foreground, self.underlined, self.bold])
 
 
 class AsciiConverter:
     """ Convert ASCII to HTML efficiently, and with ease. """
-    result = ""
 
-    prev_effect_state = TextEffectState()
-    text_effect_state = TextEffectState()
-
-    def __init__(self, insert_nbsp=True, inline_css=True):
+    def __init__(self, insert_nbsp=True, inline_css=True, verbose=False):
         """
         :param insert_nbsp: Replace spaces with non-breaking spaces
         :param inline_css: Whether to generate tags with inline css or classes
+        :param verbose: Include verbose logging such as: "Invalid tag found: x"
         """
         self.insert_nbsp = insert_nbsp
         self.inline_css = inline_css
+        self.verbose = verbose
+
+        self.text_effect_state = TextEffectState()
 
     def to_html(self, source):
-        result = ""
-
-        result += "<span style=\"display: none\">"
+        has_found_escape = False
+        result = '<span class="ansiDefault ansiBackground">'
         index = 0
         while index < len(source):
             if source[index] == "\x1b":
                 # grab the sequence to 'm', which is
-                # the (standardized) sequence end delimiter.
+                # the (standardized) sequence delimiter.
                 numbers_str = source[index + 2:].split("m")[0]
                 # then parse the codes into a sequence.
                 sequence = AsciiConverter.parse_sequence(numbers_str)
 
                 changes_state = False
                 for code in sequence:
-                    if code not in self.text_effect_state.props():
+                    if code not in self.text_effect_state:
                         changes_state = True
                         break
 
@@ -180,9 +122,14 @@ class AsciiConverter:
                     # update text effect state
                     self.text_effect_state.update(sequence)
 
-                    # close previous state and add new state
-                    result += "</span>" + self.generate_tag(self.text_effect_state)
+                    if self.verbose:
+                        for code in sequence:
+                            if code not in color_lookup.keys():
+                                print(f"\x1b[1;33m[WARNING]:\x1b[0m Found invalid code: {code}")
 
+                    # close previous state and add new state
+                    result += ("</span>" if has_found_escape else "") + self.generate_tag(self.text_effect_state)
+                    has_found_escape = True
                 index += len(numbers_str) + 3  # move past escape sequence
             else:
                 index += 1
@@ -195,7 +142,8 @@ class AsciiConverter:
                     result += source[index]
             except IndexError:
                 pass
-        return result + "</span>"
+        # close out final span and parent span
+        return result + "</span></span>"
 
     @staticmethod
     def parse_sequence(sequence):
@@ -207,6 +155,8 @@ class AsciiConverter:
         try:
             return [int(num) for num in sequence.split(";")]
         except ValueError:
+            # Must be a number, so handle an instance where
+            # end-developer mistakenly uses something else:
             if "" in sequence.split(""):
                 raise ValueError("Invalid character in escape sequence. Must be a number.\n\n\x1b[4;32m"
                                  "[Hint]\x1b[0m: Found a code with nothing!'")
@@ -215,7 +165,10 @@ class AsciiConverter:
 
     @staticmethod
     def generate_css():
-        return CSS_TEMPLATE
+        res = ".ansiDefault{#FFFFFF}.ansiBackground{#000000}"
+        for code, color in color_lookup.items():
+            res += f".ansi{code}{{{color}}}\n"
+        return res
 
     def generate_tag(self, text_state):
         if self.inline_css:
