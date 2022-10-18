@@ -4,10 +4,10 @@
 Made by Liam Seewald
 
 ---
-
+\
+<span></span>
 ## Start here:
 
-<span></span>
 
 
 ### Install!
@@ -34,7 +34,8 @@ converter.to_html("\x1b[32;4mascii_to_html\x1b[0m")
 ```
 
 ---
-
+\
+<span></span>
 ## Yes, we optimize! 
 
 > ascii_to_html will toss unnecessary data to generate cleaner HTML, \
