@@ -51,7 +51,7 @@ converter.to_html("\x1b[32;4mascii_to_html\x1b[0m")
 ...
 ```
 
-## <span style="color:green">✓</span> Much better optimized:
+## ✅ Much better optimized:
 
 ```html
 <span class="asciiBold ansi30">----</span>
