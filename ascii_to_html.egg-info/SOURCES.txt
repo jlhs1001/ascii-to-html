@@ -1,9 +1,0 @@
-README.md
-setup.cfg
-setup.py
-ascii_to_html.egg-info/PKG-INFO
-ascii_to_html.egg-info/SOURCES.txt
-ascii_to_html.egg-info/dependency_links.txt
-ascii_to_html.egg-info/top_level.txt
-src/__init__.py
-src/ascii_to_html.py

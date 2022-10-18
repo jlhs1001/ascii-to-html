@@ -1,1 +1,1 @@
-from .main import ascii_to_html
+from .main import AsciiConverter
