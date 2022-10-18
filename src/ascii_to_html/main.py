@@ -1,5 +1,3 @@
-import bisect
-
 color_lookup = {
     1: "font-weight:bold",
     4: "text-decoration:underline",
