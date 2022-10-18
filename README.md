@@ -2,11 +2,7 @@
 
 -- Made by Liam Seewald
 
----
-
 ## HTML-ify your ASCII with ease and elegance.
-
----
 
 
 ### Getting Started
