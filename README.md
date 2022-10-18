@@ -2,7 +2,7 @@
 
 -- Made by Liam Seewald
 
-## HTML-ify your ASCII with ease and elegance.
+> ## HTML-ify your ASCII with ease and elegance. _Now with optimization!_
 
 
 ### Getting Started
@@ -27,6 +27,36 @@ AsciiConverter.generate_css()
 
 ### Execute, Enjoy!
 ```python
-converter.to_html("")
+converter.to_html("\x1b[32;4mascii_to_html\x1b[0m")
 ```
 
+---
+## About optimization
+
+### Yes, we optimize!
+
+> ascii_to_html will toss unnecessary data to generate cleaner HTML,
+> something other ASCII-to-HTML converters won't do.
+
+## ❌ This is gross:
+```html
+<span class="asciiBold ansi30"></span>
+<span class="asciiBold ansi30">-</span>
+<span class="asciiBold ansi30"></span>
+<span class="asciiBold ansi30">-</span>
+<span class="asciiBold ansi30"></span>
+<span class="asciiBold ansi30">-</span>
+<span class="asciiBold ansi30"></span>
+<span class="asciiBold ansi30">-</span>
+...
+```
+
+## <span style="color:green">✓</span> Much better optimized:
+
+```html
+<span class="asciiBold ansi30">----</span>
+...
+```
+
+### This happens because sometimes programs (_cough cough mocha cough_) generate far too many escape codes.
+### We provide happen to provide a quite fast solution!
