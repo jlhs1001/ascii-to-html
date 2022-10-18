@@ -150,15 +150,15 @@ class AsciiConverter:
             return f"<span style=\"" \
                    f"{color_lookup[text_state.background] if text_state.background != 0 else ''}" \
                    f"{';' + color_lookup[text_state.foreground] if text_state.foreground != 0 else ''}" \
-                   f"{';' + color_lookup[4] if text_state.underlined else ''}" \
                    f"{';' + color_lookup[1] if text_state.bold else ''}\">" \
+                   f"{';' + color_lookup[4] if text_state.underlined else ''}" \
                    f"{';' + color_lookup[9] if text_state.underlined else ''}\">"
         else:
             return f"<span class=\"" \
                    f"{'ansi' + str(text_state.background) if text_state.background != 0 else ''}" \
                    f"{' ansi' + str(text_state.foreground) if text_state.foreground != 0 else ''}" \
-                   f"{' ansi4' if text_state.underlined else ''}" \
                    f"{' ansi1' if text_state.bold else ''}\">" \
+                   f"{' ansi4' if text_state.underlined else ''}" \
                    f"{' ansi9' if text_state.underlined else ''}\">"
 
     @staticmethod
