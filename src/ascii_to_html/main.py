@@ -149,7 +149,7 @@ class AsciiConverter:
     prev_effect_state = TextEffectState()
     text_effect_state = TextEffectState()
 
-    def __init__(self, insert_nbsp=False, inline_css=False):
+    def __init__(self, insert_nbsp=True, inline_css=True):
         """
         :param insert_nbsp: Replace spaces with non-breaking spaces
         :param inline_css: Whether to generate tags with inline css or classes

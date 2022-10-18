@@ -16,6 +16,8 @@ tests/v2.py
 
 .idea/
 
+deploy.sh
+
 temp.py
 
 # User-specific stuff:
