@@ -1,4 +1,4 @@
-# Ascii To HTML
+![# ascii_to_html](https://github.com/jlhs1001/ascii-to-html/blob/main/data/logo.png?raw=true)
 
 -- Made by Liam Seewald
 
@@ -29,3 +29,4 @@ AsciiConverter.generate_css()
 ```python
 converter.to_html("")
 ```
+
