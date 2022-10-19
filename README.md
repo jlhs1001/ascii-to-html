@@ -61,5 +61,5 @@ converter.to_html("\x1b[32;4mascii_to_html\x1b[0m")
 ...
 ```
 
-This happens because sometimes programs (_cough cough mocha cough_) generate far too many escape codes.\
-We happen to provide a rather fast solution!
+Some programs, such as Mocha, generate redundant amounts of escape codes.\
+We provide an optimized solution!
